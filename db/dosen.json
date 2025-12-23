@@ -1,0 +1,25 @@
+{
+  "dosen": [
+    {
+      "id": 1,
+      "nidn": "1234567890",
+      "nama": "Dr. Ahmad Fauzi",
+      "email": "ahmad.fauzi@univ.ac.id",
+      "jurusan": "Teknik Informatika"
+    },
+    {
+      "id": 2,
+      "nidn": "0987654321",
+      "nama": "Prof. Siti Nurhaliza",
+      "email": "siti.nurhaliza@univ.ac.id",
+      "jurusan": "Sistem Informasi"
+    },
+    {
+      "id": 3,
+      "nidn": "1122334455",
+      "nama": "Dr. Budi Santoso",
+      "email": "budi.santoso@univ.ac.id",
+      "jurusan": "Teknik Elektro"
+    }
+  ]
+}
