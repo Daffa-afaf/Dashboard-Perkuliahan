@@ -64,7 +64,8 @@
       "tahun_masuk": 2020,
       "nilai_akhir": "A",
       "maxSks": 24,
-      "sksTerpakai": 6
+      "sksTerpakai": 6,
+      "status": false
     },
     {
       "id": "A13.2020.00007",
@@ -75,7 +76,8 @@
       "tahun_masuk": 2020,
       "nilai_akhir": "B",
       "maxSks": 24,
-      "sksTerpakai": 6
+      "sksTerpakai": 6,
+      "status": false
     },
     {
       "id": "A13.2020.00008",
@@ -96,17 +98,6 @@
       "gender": "Laki-laki",
       "tahun_masuk": 2020,
       "nilai_akhir": "C",
-      "maxSks": 24,
-      "sksTerpakai": 6
-    },
-    {
-      "id": "A13.2020.00010",
-      "nim": "A13.2020.00010",
-      "nama": "Vino Santoso",
-      "fakultas": "Teknik",
-      "gender": "Laki-laki",
-      "tahun_masuk": 2020,
-      "nilai_akhir": "A",
       "maxSks": 24,
       "sksTerpakai": 6
     },
@@ -12319,6 +12310,12 @@
       "nilai_akhir": "C",
       "maxSks": 24,
       "sksTerpakai": 0
+    },
+    {
+      "id": "A13.2020.00010",
+      "nim": "A13.2020.00010",
+      "nama": "Helga Lorenza",
+      "status": true
     }
   ],
   "user": [
@@ -12350,6 +12347,26 @@
       "email": "user222@email.com",
       "password": "123haha",
       "name": "user222",
+      "role": "user",
+      "permissions": [
+        "read"
+      ]
+    },
+    {
+      "id": "4",
+      "email": "haha@email.com",
+      "password": "haha000",
+      "name": "haha",
+      "role": "user",
+      "permissions": [
+        "read"
+      ]
+    },
+    {
+      "id": "5",
+      "email": "daffaafaffirmansyah@gmail.com",
+      "password": "123hahaha",
+      "name": "daffaafaffirmansyah",
       "role": "user",
       "permissions": [
         "read"
@@ -13656,6 +13673,13 @@
       "pangkat": "Profesor",
       "maxSks": 12,
       "sksTerpakai": 0
+    },
+    {
+      "id": "1000000130",
+      "nidn": "1000000130",
+      "nama": "Prof. Aman sentosa",
+      "email": "aman.sentoasa@univ.ac.id",
+      "jurusan": "Teknik Mesin"
     }
   ],
   "matakuliah": [
@@ -13834,9 +13858,99 @@
       "dosenId": "6",
       "kapasitas": 40,
       "terdaftar": 40
+    },
+    {
+      "id": "KD103",
+      "kode": "KD103",
+      "nama": "Histologi",
+      "sks": "3",
+      "semester": "3",
+      "jurusan": "Kedokteran Umum",
+      "dosenId": "95"
     }
   ],
-  "rencanaStudi": [],
+  "rencanaStudi": [
+    {
+      "id": "rs-001",
+      "mahasiswaId": "A13.2020.00001",
+      "mataKuliahId": "5",
+      "semester": 5,
+      "nilai": "A",
+      "grade": 4
+    },
+    {
+      "id": "rs-002",
+      "mahasiswaId": "A13.2020.00001",
+      "mataKuliahId": "6",
+      "semester": 5,
+      "nilai": "A",
+      "grade": 4
+    },
+    {
+      "id": "rs-003",
+      "mahasiswaId": "A13.2020.00001",
+      "mataKuliahId": "7",
+      "semester": 5,
+      "nilai": "B",
+      "grade": 3
+    },
+    {
+      "id": "rs-004",
+      "mahasiswaId": "A13.2020.00001",
+      "mataKuliahId": "8",
+      "semester": 5,
+      "nilai": "B",
+      "grade": 3
+    },
+    {
+      "id": "rs-005",
+      "mahasiswaId": "A13.2020.00001",
+      "mataKuliahId": "9",
+      "semester": 5,
+      "nilai": "B",
+      "grade": 3
+    },
+    {
+      "id": "rs-006",
+      "mahasiswaId": "A13.2020.00001",
+      "mataKuliahId": "1",
+      "semester": 5,
+      "nilai": "A",
+      "grade": 4
+    },
+    {
+      "id": "rs-007",
+      "mahasiswaId": "A13.2020.00001",
+      "mataKuliahId": "2",
+      "semester": 5,
+      "nilai": "A",
+      "grade": 4
+    },
+    {
+      "id": "rs-008",
+      "mahasiswaId": "A13.2020.00002",
+      "mataKuliahId": "1",
+      "semester": 5,
+      "nilai": "B",
+      "grade": 3
+    },
+    {
+      "id": "rs-009",
+      "mahasiswaId": "A13.2020.00003",
+      "mataKuliahId": "3",
+      "semester": 5,
+      "nilai": "A",
+      "grade": 4
+    },
+    {
+      "id": "rs-010",
+      "mahasiswaId": "A13.2020.00003",
+      "mataKuliahId": "4",
+      "semester": 5,
+      "nilai": "A",
+      "grade": 4
+    }
+  ],
   "kelas": [
     {
       "id": "1",
@@ -14053,6 +14167,12 @@
           ]
         }
       ]
+    },
+    {
+      "id": "TI-3B",
+      "kode": "TI-3B",
+      "nama": "Ilkom2",
+      "semester": "7"
     }
   ]
 }

@@ -16,6 +16,36 @@ const KelasTable = ({ kelas = [], openEditModal, onDelete, canEdit = true, canDe
     return rencanaStudiList.filter((rs) => rs.kelasId === kelasId);
   };
 
+  const getMataKuliahCount = (kelasData) => {
+    // Get unique mata kuliah IDs from all students in this class
+    if (!kelasData.mahasiswa || kelasData.mahasiswa.length === 0) return 0;
+    
+    const allMataKuliahIds = new Set();
+    kelasData.mahasiswa.forEach(mhs => {
+      if (mhs.mataKuliahIds && Array.isArray(mhs.mataKuliahIds)) {
+        mhs.mataKuliahIds.forEach(id => allMataKuliahIds.add(id));
+      }
+    });
+    
+    return allMataKuliahIds.size;
+  };
+
+  const getMataKuliahDetails = (kelasData) => {
+    // Get all unique mata kuliah for this class
+    if (!kelasData.mahasiswa || kelasData.mahasiswa.length === 0) return [];
+    
+    const allMataKuliahIds = new Set();
+    kelasData.mahasiswa.forEach(mhs => {
+      if (mhs.mataKuliahIds && Array.isArray(mhs.mataKuliahIds)) {
+        mhs.mataKuliahIds.forEach(id => allMataKuliahIds.add(id));
+      }
+    });
+    
+    return Array.from(allMataKuliahIds).map(mkId => 
+      mataKuliahList.find(m => m.id === mkId)
+    ).filter(Boolean);
+  };
+
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm text-gray-700">
@@ -31,7 +61,8 @@ const KelasTable = ({ kelas = [], openEditModal, onDelete, canEdit = true, canDe
         <tbody className="text-xs">
           {kelas.length > 0 ? (
             kelas.map((k, index) => {
-              const rencanaStudis = getRencanaStudiForKelas(k.id);
+              const mkCount = getMataKuliahCount(k);
+              const mkDetails = getMataKuliahDetails(k);
               const isExpanded = expandedKelas === k.id;
               return (
                 <>
@@ -47,7 +78,7 @@ const KelasTable = ({ kelas = [], openEditModal, onDelete, canEdit = true, canDe
                         className="text-blue-600 hover:underline font-medium"
                         onClick={() => toggleExpand(k.id)}
                       >
-                        {rencanaStudis.length} {isExpanded ? "▼" : "▶"}
+                        {mkCount} {isExpanded ? "▼" : "▶"}
                       </button>
                     </td>
                     <td className="py-1.5 px-3 text-center space-x-1">
@@ -76,21 +107,26 @@ const KelasTable = ({ kelas = [], openEditModal, onDelete, canEdit = true, canDe
                     <tr className="bg-blue-50">
                       <td colSpan="5" className="py-2 px-3">
                         <div className="text-xs space-y-1">
-                          {rencanaStudis.map((rs) => {
-                            const mk = mataKuliahList.find((m) => m.id === rs.mataKuliahId);
-                            const dosen = dosenList.find((d) => d.id === rs.dosenId);
-                            return (
-                              <div key={rs.id} className="flex justify-between items-center bg-white px-2 py-1 rounded">
-                                <div>
-                                  <span className="font-medium">{mk?.nama}</span>
-                                  <span className="text-gray-500 ml-1">({mk?.sks} SKS)</span>
+                          {mkDetails.length > 0 ? (
+                            mkDetails.map((mk) => {
+                              const dosen = dosenList.find((d) => d.id === mk?.dosenId);
+                              return (
+                                <div key={mk?.id} className="flex justify-between items-center bg-white px-2 py-1 rounded">
+                                  <div>
+                                    <span className="font-medium">{mk?.nama}</span>
+                                    <span className="text-gray-500 ml-1">({mk?.sks} SKS)</span>
+                                  </div>
+                                  <div className="text-gray-600">
+                                    Dosen: {dosen?.nama || 'Belum ada dosen'}
+                                  </div>
                                 </div>
-                                <div className="text-gray-600">
-                                  {dosen?.nama?.substring(0, 20)}... | {rs.terdaftar}/{rs.kapasitas} mhs
-                                </div>
-                              </div>
-                            );
-                          })}
+                              );
+                            })
+                          ) : (
+                            <div className="text-gray-500 text-center py-2">
+                              Tidak ada mata kuliah
+                            </div>
+                          )}
                         </div>
                       </td>
                     </tr>

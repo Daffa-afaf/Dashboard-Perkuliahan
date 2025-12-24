@@ -15,6 +15,18 @@ export const useRencanaStudiList = (currentPage = 1, pageSize = 10) => {
   });
 };
 
+// Get ALL rencanaStudi without pagination (untuk detail view, reporting, dll)
+export const useRencanaStudiListAll = () => {
+  return useQuery({
+    queryKey: ["rencanaStudi", "all"],
+    queryFn: async () => {
+      const res = await RencanaStudiApi.getAllRencanaStudi();
+      return res.data || [];
+    },
+    gcTime: 5 * 60 * 1000,
+  });
+};
+
 // Get rencanaStudi by kelas
 export const useRencanaStudiByKelas = (kelasId) => {
   return useQuery({

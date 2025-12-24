@@ -4,6 +4,7 @@ import Sidebar from "../Layouts/Components/atoms/Sidebar";
 import Card from "../Layouts/Components/atoms/Card";
 import Heading from "../Layouts/Components/atoms/Heading";
 import Button from "../Layouts/Components/atoms/Button";
+import { confirmLogout } from "../../Utils/Helpers/SwalHelpers";
 
 const AdminLayout = () => {
   const navigate = useNavigate();
@@ -19,8 +20,10 @@ const AdminLayout = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
-    navigate("/");
+    confirmLogout(() => {
+      localStorage.removeItem("isAuthenticated");
+      navigate("/");
+    });
   };
 
   const toggleProfileMenu = () => {

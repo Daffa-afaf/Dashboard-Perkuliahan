@@ -3,19 +3,24 @@ import { useParams } from "react-router-dom";
 import Card from "../Layouts/Components/atoms/Card";
 import Heading from "../Layouts/Components/atoms/Heading";
 import { getMahasiswaById, getMahasiswaByNim } from "../../Utils/Apis/MahasiswaApi";
-import { useRencanaStudiList } from "../../Utils/Queries/useRencanaStudiQueries";
+import { useRencanaStudiListAll } from "../../Utils/Queries/useRencanaStudiQueries";
 import { useMataKuliahList } from "../../Utils/Queries/useMataKuliahQueries";
 import { useKelasList } from "../../Utils/Queries/useKelasQueries";
 import { toastError } from "../../Utils/Helpers/ToastHelpers";
+import {
+  calculateTotalSks,
+  calculateMahasiswaStatus,
+  calculateNilaiAkhir,
+  getRencanaStudisForMahasiswa,
+} from "../../Utils/Helpers/MahasiswaHelpers";
 
 const MahasiswaDetail = () => {
   const { nim } = useParams();
   const [mahasiswa, setMahasiswa] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch rencanaStudi untuk kalkulasi SKS
-  const { data: rencanaStudiResult = { data: [] } } = useRencanaStudiList(1, 200);
-  const rencanaStudiList = rencanaStudiResult.data || [];
+  // Fetch ALL rencanaStudi untuk kalkulasi SKS (tanpa pagination)
+  const { data: rencanaStudiList = [] } = useRencanaStudiListAll();
 
   // Fetch matakuliah untuk info SKS
   const { data: mataKuliahResult = { data: [] } } = useMataKuliahList(1, 100);
@@ -49,23 +54,16 @@ const MahasiswaDetail = () => {
   }
 
   // Hitung SKS terpakai dari rencanaStudi
-  const rencanaStudisForMahasiswa = rencanaStudiList.filter(
-    (rs) => rs.mahasiswaIds && rs.mahasiswaIds.includes(mahasiswa.id)
-  );
+  const sksTerpakai = calculateTotalSks(mahasiswa.id, rencanaStudiList, mataKuliahList);
   
-  const sksTerpakai = rencanaStudisForMahasiswa.reduce((total, rs) => {
-    const mk = mataKuliahList.find((m) => m.id === rs.mataKuliahId);
-    return total + (mk ? mk.sks : 0);
-  }, 0);
-  
-  // Hitung status mahasiswa berdasarkan enrollment di kelas
-  const isEnrolled = kelas.some((k) => 
-    (k.mahasiswaIds || []).includes(mahasiswa.id) || 
-    (k.mahasiswa || []).some((m) => 
-      (typeof m === 'string' ? m === mahasiswa.id : m.id === mahasiswa.id)
-    )
-  );
-  const statusMahasiswa = isEnrolled;
+  // Hitung status mahasiswa berdasarkan rencana studi
+  const statusMahasiswa = calculateMahasiswaStatus(mahasiswa.id, rencanaStudiList, mataKuliahList);
+
+  // Hitung nilai akhir dari rencana studi
+  const nilaiAkhir = calculateNilaiAkhir(mahasiswa.id, rencanaStudiList);
+
+  // Dapatkan daftar rencana studi untuk mahasiswa
+  const rencanaStudisForMahasiswa = getRencanaStudisForMahasiswa(mahasiswa.id, rencanaStudiList);
 
   return (
     <Card>
@@ -102,14 +100,26 @@ const MahasiswaDetail = () => {
           </tr>
           <tr>
             <td className="py-2 px-4 font-medium">Nilai Akhir</td>
-            <td className="py-2 px-4">{mahasiswa.nilai_akhir || "-"}</td>
+            <td className="py-2 px-4">
+              {nilaiAkhir === "-" ? (
+                <span className="text-gray-500 italic">
+                  {statusMahasiswa ? "Menunggu nilai" : "Tidak ada data"}
+                </span>
+              ) : (
+                nilaiAkhir
+              )}
+            </td>
           </tr>
           <tr className="bg-blue-50 font-semibold">
             <td className="py-2 px-4 font-medium">SKS Terpakai / Max</td>
             <td className="py-2 px-4">
-              <span className={sksTerpakai > mahasiswa.maxSks ? "text-red-600" : "text-green-600"}>
-                {sksTerpakai} / {mahasiswa.maxSks || 24} SKS
-              </span>
+              {sksTerpakai === 0 ? (
+                <span className="text-gray-500">0 / {mahasiswa.maxSks || 24} SKS</span>
+              ) : (
+                <span className={sksTerpakai > mahasiswa.maxSks ? "text-red-600" : "text-green-600"}>
+                  {sksTerpakai} / {mahasiswa.maxSks || 24} SKS
+                </span>
+              )}
             </td>
           </tr>
         </tbody>
@@ -125,16 +135,25 @@ const MahasiswaDetail = () => {
                 <th className="py-1 px-2 text-left">Mata Kuliah</th>
                 <th className="py-1 px-2 text-center">SKS</th>
                 <th className="py-1 px-2 text-center">Semester</th>
+                <th className="py-1 px-2 text-center">Nilai</th>
               </tr>
             </thead>
             <tbody>
               {rencanaStudisForMahasiswa.map((rs) => {
                 const mk = mataKuliahList.find((m) => m.id === rs.mataKuliahId);
+                const grade = rs.grade || rs.nilai || "-";
                 return (
                   <tr key={rs.id} className="border-t">
                     <td className="py-1 px-2">{mk?.nama}</td>
                     <td className="py-1 px-2 text-center">{mk?.sks}</td>
                     <td className="py-1 px-2 text-center">{mk?.semester}</td>
+                    <td className="py-1 px-2 text-center font-semibold">
+                      {grade === "-" ? (
+                        <span className="text-gray-500 italic">Menunggu</span>
+                      ) : (
+                        grade
+                      )}
+                    </td>
                   </tr>
                 );
               })}
